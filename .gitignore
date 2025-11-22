@@ -1,0 +1,32 @@
+# Credentials and sensitive data
+.msmtprc
+*.log
+.last_*
+.failed_*
+.ssh_*
+.knock_*
+*_hash*
+*.db
+
+# Temporary files
+*.tmp
+*.swp
+*~
+nohup.out
+
+# User-specific data
+boot.log
+email_script.log
+ssh_monitor.log
+ssh_success.log
+battery_monitor.log
+network_quality.log
+wifi_monitor.log
+data_usage.log
+network_monitor.log
+
+# Don't upload actual passwords or tokens
+config_private.sh
+
+# vnstat database
+vnstat.db
