@@ -1,0 +1,94 @@
+TERMUX SSH AUTO NOTIFIER
+========================
+
+Automated SSH monitoring and notification system for Termux
+Created by AkNG (https://github.com/workforakng)
+
+FEATURES
+--------
+✓ Automatic SSH connection details via email
+✓ IP address change detection and alerts
+✓ Failed SSH login attempt monitoring
+✓ Successful SSH connection notifications
+✓ Battery and temperature monitoring
+✓ CPU and RAM usage tracking
+✓ WiFi network change detection
+✓ Data usage monitoring (vnstat)
+✓ Auto-start on device boot
+✓ Beautiful HTML email notifications
+
+REQUIREMENTS
+------------
+- Android device with Termux
+- Gmail account with App Password
+- Termux:Boot app (from F-Droid)
+- Root access (optional, for vnstatd)
+
+INSTALLATION
+------------
+1. Clone this repository:
+   git clone https://github.com/workforakng/ssh_termux_auto.git
+   cd ssh_termux_auto
+
+2. Run the installer:
+   bash install.sh
+
+3. Follow the on-screen instructions to configure
+
+QUICK START
+-----------
+After installation:
+
+1. Start all services:
+   ~/scripts/manager.sh
+   (Choose option 1)
+
+2. Check status:
+   ~/scripts/manager.sh
+   (Choose option 3)
+
+3. Test email:
+   ~/scripts/email.sh
+
+SCRIPTS
+-------
+email.sh                 - Main email notification script
+manager.sh               - Control panel for all services
+network_monitor.sh       - Monitors IP address changes
+ssh_monitor.sh           - Detects failed SSH login attempts
+ssh_success_monitor.sh   - Alerts on successful SSH connections
+battery_monitor.sh       - Battery and temperature monitoring
+wifi_monitor.sh          - WiFi network change detection
+data_usage_monitor.sh    - Data usage tracking
+network_quality.sh       - Network quality monitoring
+boot/start-ssh-notifier  - Auto-start script for boot
+
+CONFIGURATION
+-------------
+All scripts use configuration from:
+- ~/.msmtprc (email settings)
+- config.sh (thresholds and settings)
+
+Edit these files to customize behavior.
+
+SECURITY NOTES
+--------------
+- Never commit real credentials to Git
+- Use Gmail App Passwords, not your actual password
+- Keep .msmtprc permissions at 600
+- Review .gitignore before pushing
+
+LICENSE
+-------
+MIT License - Free to use and modify
+
+AUTHOR
+------
+AkNG
+GitHub: https://github.com/workforakng
+Email: workforakng@gmail.com
+
+SUPPORT
+-------
+For issues and questions:
+https://github.com/workforakng/ssh_termux_auto/issues

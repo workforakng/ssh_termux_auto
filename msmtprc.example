@@ -1,0 +1,19 @@
+# msmtp Configuration Template
+# Copy this to ~/.msmtprc and fill in your details
+
+defaults
+auth           on
+tls            on
+tls_trust_file /data/data/com.termux/files/usr/etc/tls/cert.pem
+logfile        ~/.msmtp.log
+
+# Gmail account
+account        gmail
+host           smtp.gmail.com
+port           587
+from           YOUR_EMAIL@gmail.com
+user           YOUR_EMAIL@gmail.com
+password       YOUR_APP_PASSWORD_HERE
+
+# Set default account
+account default : gmail

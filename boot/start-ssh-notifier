@@ -1,0 +1,118 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+# Complete Auto-Start Boot Script - No Duplicates
+
+BOOT_LOG="$HOME/boot.log"
+
+log_boot() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$BOOT_LOG"
+}
+
+log_boot "========== BOOT SEQUENCE STARTED =========="
+
+# Acquire wakelock
+termux-wake-lock
+log_boot "Wake lock acquired"
+
+# Wait for network
+log_boot "Waiting for network..."
+sleep 30
+
+# Check network connectivity
+ping -c 1 8.8.8.8 > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    log_boot "Network is available"
+else
+    log_boot "WARNING: Network not available, retrying in 30s"
+    sleep 30
+fi
+
+# Start cron daemon
+if ! pgrep -x "crond" > /dev/null; then
+    crond
+    log_boot "Cron daemon started"
+else
+    log_boot "Cron daemon already running"
+fi
+
+# Start vnstat daemon
+if ! pgrep -x "vnstatd" > /dev/null; then
+    sudo vnstatd -d 2>/dev/null
+    log_boot "vnstat daemon started"
+else
+    log_boot "vnstat daemon already running"
+fi
+
+# Wait for system to stabilize
+sleep 10
+
+log_boot "Starting monitoring services..."
+
+# Start all monitoring services (only if not running)
+if ! pgrep -f "network_monitor.sh" > /dev/null; then
+    nohup $HOME/scripts/network_monitor.sh > /dev/null 2>&1 &
+    log_boot "Network monitor started (PID: $!)"
+else
+    log_boot "Network monitor already running"
+fi
+
+if ! pgrep -f "ssh_monitor.sh" > /dev/null; then
+    nohup $HOME/scripts/ssh_monitor.sh > /dev/null 2>&1 &
+    log_boot "SSH monitor started (PID: $!)"
+else
+    log_boot "SSH monitor already running"
+fi
+
+if ! pgrep -f "ssh_success_monitor.sh" > /dev/null; then
+    nohup $HOME/scripts/ssh_success_monitor.sh > /dev/null 2>&1 &
+    log_boot "SSH success monitor started (PID: $!)"
+else
+    log_boot "SSH success monitor already running"
+fi
+
+if ! pgrep -f "battery_monitor.sh" > /dev/null; then
+    nohup $HOME/scripts/battery_monitor.sh > /dev/null 2>&1 &
+    log_boot "Battery monitor started (PID: $!)"
+else
+    log_boot "Battery monitor already running"
+fi
+
+if ! pgrep -f "network_quality.sh" > /dev/null; then
+    nohup $HOME/scripts/network_quality.sh > /dev/null 2>&1 &
+    log_boot "Network quality monitor started (PID: $!)"
+else
+    log_boot "Network quality monitor already running"
+fi
+
+if ! pgrep -f "wifi_monitor.sh" > /dev/null; then
+    nohup $HOME/scripts/wifi_monitor.sh > /dev/null 2>&1 &
+    log_boot "WiFi monitor started (PID: $!)"
+else
+    log_boot "WiFi monitor already running"
+fi
+
+if ! pgrep -f "data_usage_monitor.sh" > /dev/null; then
+    nohup $HOME/scripts/data_usage_monitor.sh > /dev/null 2>&1 &
+    log_boot "Data usage monitor started (PID: $!)"
+else
+    log_boot "Data usage monitor already running"
+fi
+
+log_boot "All monitors checked and started"
+
+# Send boot notification (only if IP changed)
+sleep 5
+$HOME/scripts/email.sh
+if [ $? -eq 0 ]; then
+    log_boot "Boot notification sent"
+else
+    log_boot "Boot notification skipped (no changes)"
+fi
+
+log_boot "========== BOOT SEQUENCE COMPLETED =========="
+
+# Display summary
+echo "" >> "$BOOT_LOG"
+echo "Running monitors:" >> "$BOOT_LOG"
+ps aux | grep -E "monitor.sh" | grep -v grep | awk '{print $11}' >> "$BOOT_LOG"
+echo "" >> "$BOOT_LOG"
